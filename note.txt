@@ -1,0 +1,2 @@
+**Oto** is an automated tool for extracting endpoints, sensitive data, and secrets from HTML and JavaScript source code.  
+It helps security researchers, bug bounty hunters, and developers discover hidden API endpoints, credentials, and other valuable information in web applications for reconnaissance and vulnerability assessment.
