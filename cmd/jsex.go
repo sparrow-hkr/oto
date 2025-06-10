@@ -16,6 +16,7 @@ var (
 	domain      string
 	domainFile  string
 	outputFile  string
+	jsExLog     string
 	resultTypes = []string{}
 	concurrency int
 	timeout     time.Duration
@@ -67,7 +68,7 @@ func processDomainList(domainsFile string) {
 		return
 	}
 
-	processUrls.ProcessURLs(urls, resultTypes, outputFile, concurrency, timeout, verbose, debug)
+	processUrls.ProcessURLs(urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
 }
 func processSingleDomain(domain string) {
 	var urls []string
@@ -76,7 +77,7 @@ func processSingleDomain(domain string) {
 	} else {
 		urls = append(urls, domain)
 	}
-	processUrls.ProcessURLs(urls, resultTypes, outputFile, concurrency, timeout, verbose, debug)
+	processUrls.ProcessURLs(urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
 }
 
 func init() {
@@ -88,5 +89,6 @@ func init() {
 	endpointCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
 	endpointCmd.Flags().BoolVarP(&debug, "debug", "D", false, "Enable debug output")
 	endpointCmd.Flags().StringVarP(&outputFile, "output", "o", "", "Output file to save results (default: stdout)")
+	endpointCmd.Flags().StringVarP(&jsExLog, "jslog", "j", "", "File to save JavaScript extraction logs (optional)")
 	rootCmd.AddCommand(endpointCmd)
 }

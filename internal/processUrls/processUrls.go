@@ -63,20 +63,22 @@ func ExtractJSUrls(htmlBody []byte, baseURL string, verbose bool) []string {
 			jsUrl = parsed.Scheme + "://" + parsed.Host + "/" + strings.TrimLeft(jsUrl, "/")
 		}
 		jsUrls = append(jsUrls, jsUrl)
+		// Print extracted JS URL if verbose mode is enabled
 		if verbose {
-			fmt.Printf("%s-%s Extracted JS URL: %s\n", Yellow, Reset, jsUrl)
+			fmt.Printf("%s+%s Extracted JS URL: %s %s[%s]%s\n", Green, Reset, jsUrl, Green, baseURL, Reset)
 		}
 	}
 	return jsUrls
 }
 
 // ProcessURLs fetches HTML source from given URLs, extracts endpoints/paths, and also processes JS files.
-func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurrency int, timeout time.Duration, verbose bool, debug bool) {
+func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurrency int, timeout time.Duration, jsExLog string, verbose bool, debug bool) {
 	var results []shared.Result
+	jsExtractionLogs := make(map[string][]string)
 	sem := make(chan struct{}, concurrency)
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	banner.PrintProcessMessage(urls, resultTypes, outputFile, concurrency, timeout, verbose, debug)
+	banner.PrintProcessMessage(urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -123,6 +125,9 @@ func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurr
 		}
 		// Extract JS URLs and add to allUrls if not seen
 		jsUrls := ExtractJSUrls(body, urlStr, verbose)
+		if len(jsUrls) > 0 {
+			jsExtractionLogs[urlStr] = append(jsExtractionLogs[urlStr], jsUrls...)
+		}
 		for _, jsUrl := range jsUrls {
 			if _, exists := seen[jsUrl]; !exists {
 				seen[jsUrl] = struct{}{}
@@ -179,6 +184,13 @@ func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurr
 		}(urlStr)
 	}
 	wg.Wait()
+	// If JS extraction log file is specified, write the logs
+	if jsExLog != "" {
+		logData, err := json.MarshalIndent(jsExtractionLogs, "", "  ")
+		if err == nil {
+			os.WriteFile(jsExLog, logData, 0644)
+		}
+	}
 
 	// Print results as JSON
 	data, err := json.MarshalIndent(results, "", "  ")

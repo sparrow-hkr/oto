@@ -1,0 +1,38 @@
+{
+  "https://2fa.six-group.com": [
+    "https://2fa.six-group.com/scripts/jsClasses.js",
+    "https://2fa.six-group.com/scripts/jquery-3.6.1.min.js",
+    "https://2fa.six-group.com/scripts/jquery-ui.js",
+    "https://2fa.six-group.com/scripts/jquery.base64.min.js",
+    "https://2fa.six-group.com/scripts/credentialProviderHost.js",
+    "https://2fa.six-group.com/scripts/login.js",
+    "https://2fa.six-group.com/scripts/libphonenumber.js",
+    "https://2fa.six-group.com/branding/js/branding.js",
+    "https://2fa.six-group.com/scripts/globalhandler.js",
+    "https://2fa.six-group.com/scripts/cookieConsentLib.min.js"
+  ],
+  "https://apiportal-qa.np.six-group.com": [
+    "https://apiportal-qa.np.six-group.com/resources/scripts/main.js?dc572764f7"
+  ],
+  "https://apiportal.six-group.com": [
+    "https://apiportal.six-group.com/assets/static/js/main.0fbdf00d.js",
+    "https://apiportal.six-group.com/assets/static/js/968.47ad7169.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/936.768e1fb1.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/765.348ef1c4.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/610.73035cb4.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/582.41fa60ab.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/529.4a54f79f.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/499.c11e8468.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/48.e54aa023.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/453.9f15efd6.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/383.28c31a9f.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/259.93650937.chunk.js",
+    "https://apiportal.six-group.com/assets/static/js/128.f31fe7b5.chunk.js",
+    "https://apiportal.six-group.com/assets/js/third-party/jquery.min.js",
+    "https://apiportal.six-group.com/assets/js/kong/kong.js",
+    "https://apiportal.six-group.com/assets/js/kong/kong.utils.js",
+    "https://apiportal.six-group.com/assets/js/kong/kong.auth.js",
+    "https://apiportal.six-group.com/assets/js/appRouter-666c294.min.js",
+    "https://apiportal.six-group.com/assets/js/kongponents-666c294.min.js"
+  ]
+}

@@ -24,12 +24,21 @@ func PrintBanner() {
 `, Yellow, Reset, Green, Reset, Red, Reset, Red, Reset, Yellow, Reset, Cyan, Reset, Cyan, Reset)
 	fmt.Println(banner)
 }
-func PrintProcessMessage(urls []string, resultTypes []string, outputFile string, concurrency int, timeout time.Duration, verbose bool, debug bool) {
+func PrintProcessMessage(urls []string, resultTypes []string, outputFile string, concurrency int, timeout time.Duration, jsExLog string, verbose bool, debug bool) {
 	fmt.Printf("[%s*%s] Processing URLs: %d\n", Green, Reset, len(urls))
 	fmt.Printf("[%s*%s] Result Types: %s\n", Green, Reset, resultTypes)
-	fmt.Printf("[%s*%s] Output File: %s\n", Green, Reset, outputFile)
 	fmt.Printf("[%s*%s] Concurrency: %d\n", Green, Reset, concurrency)
-	fmt.Printf("[%s*%s] Timeout: %d ms\n", Green, Reset, timeout)
+	fmt.Printf("[%s*%s] Timeout: %s\n", Green, Reset, timeout)
+	if outputFile == "" {
+		fmt.Printf("[%s*%s] Output File: %sNot set%s\n", Red, Reset, Red, Reset)
+	} else {
+		fmt.Printf("[%s*%s] Output File: %s\n", Green, Reset, outputFile)
+	}
+	if jsExLog != "" {
+		fmt.Printf("[%s*%s] JS Extraction Log: %s\n", Green, Reset, jsExLog)
+	} else {
+		fmt.Printf("[%s*%s] JS Extraction Log: %sNot set%s\n", Red, Reset, Red, Reset)
+	}
 	if verbose {
 		fmt.Printf("[%s*%s] Verbose mode %senabled%s\n", Green, Reset, Green, Reset)
 	} else {

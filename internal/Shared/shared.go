@@ -14,6 +14,22 @@ const (
 	ColorReset   = "\033[0m"
 )
 
+type JSExtractionLog struct {
+	ParentURL string   `json:"parent_url,omitempty"`
+	JSURL     []string `json:"js_url,omitempty"`
+}
+
+// Result represents the structured output for extracted data
+type Result struct {
+	URL               string   `json:"url"`
+	Endpoints         []string `json:"endpoints,omitempty"`
+	Paths             []string `json:"paths,omitempty"`
+	Info              []string `json:"info,omitempty"`
+	CriticalPaths     []string `json:"critical_paths,omitempty"`
+	SensitiveKeywords []string `json:"sensitive,omitempty"`
+	Scripts           []string `json:"scripts,omitempty"`
+	// Add other fields as needed
+}
 type RegexPatterns struct {
 	HTMLTagFilter     *regexp.Regexp
 	Endpoint          *regexp.Regexp
@@ -171,16 +187,4 @@ var Patterns = RegexPatterns{
     secret[_-]?access[_-]?key
 )`),
 	Script: regexp.MustCompile(`<script[^>]+src=["']([^"']+)["']`),
-}
-
-// Result represents the structured output for extracted data
-type Result struct {
-	URL               string   `json:"url"`
-	Endpoints         []string `json:"endpoints,omitempty"`
-	Paths             []string `json:"paths,omitempty"`
-	Info              []string `json:"info,omitempty"`
-	CriticalPaths     []string `json:"critical_paths,omitempty"`
-	SensitiveKeywords []string `json:"sensitive,omitempty"`
-	Scripts           []string `json:"scripts,omitempty"`
-	// Add other fields as needed
 }
