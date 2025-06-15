@@ -20,6 +20,9 @@ var (
 	resultTypes = []string{}
 	concurrency int
 	timeout     time.Duration
+	proxyAddr   string
+	cookieFile  string
+	cookieStr   string
 	verbose     bool
 	debug       bool
 )
@@ -68,7 +71,7 @@ func processDomainList(domainsFile string) {
 		return
 	}
 
-	processUrls.ProcessURLs(urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
+	processUrls.ProcessURLs(proxyAddr, cookieStr, cookieFile, urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
 }
 func processSingleDomain(domain string) {
 	var urls []string
@@ -77,7 +80,7 @@ func processSingleDomain(domain string) {
 	} else {
 		urls = append(urls, domain)
 	}
-	processUrls.ProcessURLs(urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
+	processUrls.ProcessURLs(proxyAddr, cookieStr, cookieFile, urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
 }
 
 func init() {
@@ -90,5 +93,8 @@ func init() {
 	endpointCmd.Flags().BoolVarP(&debug, "debug", "D", false, "Enable debug output")
 	endpointCmd.Flags().StringVarP(&outputFile, "output", "o", "", "Output file to save results (default: stdout)")
 	endpointCmd.Flags().StringVarP(&jsExLog, "jslog", "j", "", "File to save JavaScript extraction logs (optional)")
+	endpointCmd.Flags().StringVar(&proxyAddr, "proxy", "", "Proxy address (e.g., http://127.0.0.1:8080)")
+	endpointCmd.Flags().StringVar(&cookieFile, "cookie-file", "", "Path to file containing cookies")
+	endpointCmd.Flags().StringVar(&cookieStr, "cookie", "", "Cookie string (e.g., 'sessionid=abc; other=xyz')")
 	rootCmd.AddCommand(endpointCmd)
 }

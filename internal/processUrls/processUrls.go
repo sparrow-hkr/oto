@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"os"
 	"strings"
@@ -33,6 +34,35 @@ var (
 	reSensitive   = shared.Patterns.SensitiveKeywords
 	reScript      = shared.Patterns.Script
 )
+
+// Build HTTP client with optional proxy support
+func BuildHttpClient(proxyAddr string, timeout time.Duration) *http.Client {
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	if proxyAddr != "" {
+		proxyURL, _ := url.Parse(proxyAddr)
+		transport.Proxy = http.ProxyURL(proxyURL)
+	}
+	jar, _ := cookiejar.New(nil)
+	return &http.Client{
+		Transport: transport,
+		Timeout:   timeout,
+		Jar:       jar,
+	}
+}
+
+// Set cookies from string or file
+func SetRequestCookies(req *http.Request, cookieStr, cookieFile string) {
+	if cookieStr != "" {
+		req.Header.Set("Cookie", cookieStr)
+	} else if cookieFile != "" {
+		data, err := os.ReadFile(cookieFile)
+		if err == nil {
+			req.Header.Set("Cookie", strings.TrimSpace(string(data)))
+		}
+	}
+}
 
 func filterHtmlTags(items []string) []string {
 	var filtered []string
@@ -72,7 +102,19 @@ func ExtractJSUrls(htmlBody []byte, baseURL string, verbose bool) []string {
 }
 
 // ProcessURLs fetches HTML source from given URLs, extracts endpoints/paths, and also processes JS files.
-func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurrency int, timeout time.Duration, jsExLog string, verbose bool, debug bool) {
+func ProcessURLs(
+	proxyAddr string,
+	cookieStr string,
+	cookieFile string,
+	urls []string,
+	resultTypes []string,
+	outputFile string,
+	concurrency int,
+	timeout time.Duration,
+	jsExLog string,
+	verbose bool,
+	debug bool,
+) {
 	var results []shared.Result
 	jsExtractionLogs := make(map[string][]string)
 	sem := make(chan struct{}, concurrency)
@@ -80,12 +122,7 @@ func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurr
 	var mu sync.Mutex
 	banner.PrintProcessMessage(urls, resultTypes, outputFile, concurrency, timeout, jsExLog, verbose, debug)
 
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-		Timeout: timeout,
-	}
+	client := BuildHttpClient(proxyAddr, timeout)
 
 	// Deduplication map
 	seen := make(map[string]struct{})
@@ -108,7 +145,9 @@ func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurr
 		seen[urlStr] = struct{}{}
 		allUrls = append(allUrls, urlStr)
 
-		resp, err := client.Get(urlStr)
+		req, _ := http.NewRequest("GET", urlStr, nil)
+		SetRequestCookies(req, cookieStr, cookieFile)
+		resp, err := client.Do(req)
 		if err != nil {
 			if debug {
 				fmt.Printf("- Error fetching URL: %s, %v\n", urlStr, err)
@@ -143,7 +182,9 @@ func ProcessURLs(urls []string, resultTypes []string, outputFile string, concurr
 		go func(urlStr string) {
 			defer wg.Done()
 			defer func() { <-sem }()
-			resp, err := client.Get(urlStr)
+			req, _ := http.NewRequest("GET", urlStr, nil)
+			SetRequestCookies(req, cookieStr, cookieFile)
+			resp, err := client.Do(req)
 			if err != nil {
 				if debug {
 					fmt.Printf("- Error fetching URL: %s, %v\n", urlStr, err)
